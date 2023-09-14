@@ -1,0 +1,34 @@
+.signup {
+    display: flex;
+    justify-content: center;
+    
+    .signup-form{
+        display: flex;
+        flex-direction: column;
+        
+        .signup-form-input {
+            margin: 0.25rem;
+        }
+
+        .signup-form-input-invalid {
+            border-color: red;
+            background-color: pink;
+        }
+
+        .signup-form-paragraph {
+            padding: 0 0.25rem;
+            margin-bottom: 0;
+        }
+
+        .signup-form-paragraph-invalid {
+            margin-top: 0.25rem;
+            font-size: 0.75rem;
+            color: red;
+        }
+
+        .signup-form-button {
+            margin: 1rem 0.25rem;
+        }
+    }
+    
+}

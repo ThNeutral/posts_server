@@ -1,0 +1,42 @@
+.header {
+  position: sticky;
+  background-color: $header-color;
+  
+  .header-content {
+    padding: 0 15%;
+    display: flex;
+    justify-content: space-around;
+
+    .header-content-left {
+      display: flex;
+      align-items: center;
+      .header-content-left-icon {
+        height: 2rem;
+        padding: 0.3rem;
+      }
+      .header-content-left-button {
+        background-color: inherit;
+        cursor: pointer;
+      }
+    }
+
+    .header-content-right {
+      display: flex;
+      align-items: center;
+      .header-content-right-button {
+        background-color: inherit;
+        cursor: pointer;
+      }
+      .header-content-right-search{
+        background-color: inherit;
+      }
+    }
+
+  }
+
+  .header-hr {
+    margin: 0;
+    height: 2px;
+    background-color: black;
+  }
+}
