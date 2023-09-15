@@ -1,6 +1,7 @@
 import { useReducer, useState } from "react";
 import { useNavigate } from "react-router";
 import { apiKeyKey } from "../../exports/consts";
+import { homePagePath } from "../../exports/pathnames";
 
 type StateOfSubmitType = "IDLE" | "LOADING" | "SUCCESS" | "FAILURE";
 type IsValidInputType = {
@@ -88,7 +89,7 @@ export default function SignUpPage() {
         const json = (await response.json()) as CreateUserResponse;
         localStorage.setItem(apiKeyKey, json.api_key);
         setStateOfSubmit("SUCCESS");
-        // navigate("/")
+        navigate(homePagePath)
       } else {
         setStateOfSubmit("FAILURE");
       }
