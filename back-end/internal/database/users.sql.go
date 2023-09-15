@@ -15,7 +15,7 @@ import (
 const createUser = `-- name: CreateUser :one
 INSERT INTO users (id, created_at, updated_at, username, password, email, api_key)
 VALUES ($1, $2, $3, $4, $5, $6, encode(sha256(random()::text::bytea), 'hex'))
-RETURNING id, created_at, updated_at, username, password, email, api_key
+RETURNING id, created_at, updated_at, username, email, password, api_key
 `
 
 type CreateUserParams struct {
@@ -42,8 +42,32 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, e
 		&i.CreatedAt,
 		&i.UpdatedAt,
 		&i.Username,
-		&i.Password,
 		&i.Email,
+		&i.Password,
+		&i.ApiKey,
+	)
+	return i, err
+}
+
+const getUserByNameAndPassword = `-- name: GetUserByNameAndPassword :one
+SELECT id, created_at, updated_at, username, email, password, api_key FROM users WHERE username = $1 AND password = $2
+`
+
+type GetUserByNameAndPasswordParams struct {
+	Username string
+	Password string
+}
+
+func (q *Queries) GetUserByNameAndPassword(ctx context.Context, arg GetUserByNameAndPasswordParams) (User, error) {
+	row := q.db.QueryRowContext(ctx, getUserByNameAndPassword, arg.Username, arg.Password)
+	var i User
+	err := row.Scan(
+		&i.ID,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+		&i.Username,
+		&i.Email,
+		&i.Password,
 		&i.ApiKey,
 	)
 	return i, err

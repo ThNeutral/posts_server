@@ -1,6 +1,8 @@
 import { useReducer, useState } from "react";
+import { useNavigate } from "react-router";
+import { apiKeyKey } from "../../exports/consts";
 
-type StateOfSubmitType = "IDLE" | "SUCCESS" | "FAILURE";
+type StateOfSubmitType = "IDLE" | "LOADING" | "SUCCESS" | "FAILURE";
 type IsValidInputType = {
   isWrongEmail: boolean;
   isWrongPassword: boolean;
@@ -8,9 +10,15 @@ type IsValidInputType = {
 type ValidityActionsTypes =
   | "CHANGE_VALIDITY_OF_PASSWORD"
   | "CHANGE_VALIDITY_OF_EMAIL";
+
 type ValidityAction = { payload: boolean; type: ValidityActionsTypes };
 
-const testRegex = /(.+)@(.+){2,}\.(.+){2,}/;
+type CreateUserResponse = {
+  api_key: string;
+  token_type: "Bearer";
+};
+
+const emailTestRegex = /(.+)@(.+){2,}\.(.+){2,}/;
 
 const initIsValidInput: IsValidInputType = {
   isWrongEmail: false,
@@ -35,6 +43,7 @@ export default function SignUpPage() {
     isValidInputReducer,
     initIsValidInput
   );
+  const navigate = useNavigate();
 
   async function signUpFormConfirm(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -48,7 +57,7 @@ export default function SignUpPage() {
       type: "CHANGE_VALIDITY_OF_PASSWORD",
     });
     let valid = true;
-    if (!testRegex.test(e.target[1].value)) {
+    if (!emailTestRegex.test(e.target[1].value)) {
       valid = false;
       dispatchIsInvalidInput({
         payload: true,
@@ -63,7 +72,6 @@ export default function SignUpPage() {
       });
     }
     if (valid) {
-      setStateOfSubmit("SUCCESS");
       const body = {
         username: e.target[0].value,
         email: e.target[1].value,
@@ -76,8 +84,14 @@ export default function SignUpPage() {
           body: JSON.stringify(body),
         }
       );
-      const json = await response.json();
-      console.log(json);
+      if (response.status === 201) {
+        const json = (await response.json()) as CreateUserResponse;
+        localStorage.setItem(apiKeyKey, json.api_key);
+        setStateOfSubmit("SUCCESS");
+        // navigate("/")
+      } else {
+        setStateOfSubmit("FAILURE");
+      }
     }
   }
   return (
@@ -123,7 +137,11 @@ export default function SignUpPage() {
           type="password"
         />
         <button className="signup-form-button" type="submit">
-          {stateOfSubmit === "IDLE" ? "Sign up!" : "Fetching..."}
+          {stateOfSubmit === "IDLE"
+            ? "Sign up!"
+            : stateOfSubmit === "LOADING"
+            ? "Fetching..."
+            : "Failed to create user"}
         </button>
       </form>
     </div>

@@ -4,6 +4,9 @@ import "./main.scss";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Wrapper from "./components/Wrapper/Wrapper";
 import SignUpPage from "./components/SignUpPage/SIgnUpPage";
+import LoginPage from "./components/LoginPage/LoginPage";
+
+export const AuthProvider = React.createContext("");
 
 const router = createBrowserRouter([
   {
@@ -11,10 +14,14 @@ const router = createBrowserRouter([
     element: <Wrapper />,
     children: [
       {
+        path: "/login",
+        element: <LoginPage />,
+      },
+      {
         path: "/sign-up",
-        element: <SignUpPage />
-      }
-    ]
+        element: <SignUpPage />,
+      },
+    ],
   },
 ]);
 
